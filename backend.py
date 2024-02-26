@@ -15,7 +15,7 @@ openai_api_key = os.getenv("OPENAI_API_KEY")
 
 
 def advice_response(instruction, answer):
-    template = """ Assume the role of a university professor and review my assignment. I am a university student and you are addressing me only so don't say things like "Welcome to our class!". The instruction for the assignment is: "{instruction}" and my answer is: "{answer}". What other things should I add or remove to make the assignment the best it can be? Let your response be in html body format. Response containing pretty html and list is considered good. Answer in the same language as it is in the {answer}.
+    template = """ Assume the role of a university professor and review my assignment. I am a university student and you are addressing me only so don't say things like "Welcome to our class!". The instruction for the assignment is: "{instruction}" and my answer is: "{answer}". What other things should I add or remove to make the assignment the best it can be? Let your response be in html body format. Response containing pretty html that includes <li>, <italics>, <bold> etc is considered good. Answer in the same language as it is in the {answer}.
     """
     prompt_template = PromptTemplate(
         input_variables=["instruction", "answer"],
