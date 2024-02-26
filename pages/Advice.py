@@ -1,9 +1,11 @@
 import streamlit as st
 from streamlit_extras.switch_page_button import switch_page
 import backend
+import json
+import main
 
 
-st.title('Advice')
+# st.title('Advice')
 
 st.markdown("""
 <style>
@@ -18,20 +20,23 @@ st.markdown("""
 
 
 def page():
-    # st.text_area("Sugestions", height=500)
-    html = """
-            <h1>You should do this</h1>
-            <h1>You should remove this</h1>
-        """
-    st.write(
-        html,
-        unsafe_allow_html=True)
-    # html = st.markdown("""<h1>You should do this</h1>""",
-    #                    unsafe_allow_html=True)
+    with st.spinner('Reviewing...'):
+        response = backend.advice_response(
+            instruction=main.query_text, answer=main.draft_answer)
+        with open('data.json', 'w', encoding='utf-8') as f:
+            json.dump(response, f, ensure_ascii=False, indent=4)
+
+        f = open('data.json')
+        html_text = json.load(f)
+        html_text = html_text.get("text")
+        f.close()
+        st.write(
+            html_text,
+            unsafe_allow_html=True)
 
     col1, col2 = st.columns(2)
-    prev = col1.button("Prev")
-    nextt = col2.button("Next")
+    prev = col1.button("Prev", key="advicePrev")
+    nextt = col2.button("Next", key="adviceNext")
 
     if prev:
         switch_page("main")

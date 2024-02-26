@@ -62,8 +62,8 @@ def main_page():
         st.session_state.query = query_text
         st.session_state.draft = draft_answer
         # Get or print the two inputs
-        print(st.session_state.query)
-        print(st.session_state.draft)
+        # print(st.session_state.query)
+        # print(st.session_state.draft)
         switch_page("Advice")
 
 

@@ -7,7 +7,7 @@ import streamlit as st
 from streamlit_extras.switch_page_button import switch_page
 import os
 
-st.title('Chat with bot')
+st.title('Docbot')
 
 st.markdown("""
 <style>
@@ -54,7 +54,6 @@ if submitted and openai_api_key.startswith('sk-'):
         response = generate_response(
             uploaded_file, openai_api_key, query_text)
         result.append(response)
-        del openai_api_key
 
 if len(result):
     st.info(response)
@@ -67,6 +66,3 @@ def more_page():
 
 
 more_page()
-
-# class of what to delete
-# st-emotion-cache-sqwxtx eczjsme11
