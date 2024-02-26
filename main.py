@@ -1,80 +1,70 @@
 import streamlit as st
-from streamlit_option_menu import option_menu
-# 1=sidebar menu, 2=horizontal menu, 3=horizontal menu w/ custom menu
-EXAMPLE_NO = 3
+from streamlit_extras.switch_page_button import switch_page
 
 
-def streamlit_menu(example=EXAMPLE_NO, index=0):
-    if example == 1:
-        # 1. as sidebar menu
-        with st.sidebar:
-            selected = option_menu(
-                menu_title=None,  # required
-                options=["Home", "Projects", "Contact"],  # required
-                icons=["house", "book", "envelope"],  # optional
-                menu_icon="cast",  # optional
-                default_index=index,  # optional
-            )
-        return selected
+st.title('Your one-stop assignment hub')
 
-    if example == 2:
-        # 2. horizontal menu w/o custom style
-        selected = option_menu(
-            menu_title=None,  # required
-            options=["Home", "Projects", "Contact"],  # required
-            icons=["house", "book", "envelope"],  # optional
-            menu_icon="cast",  # optional
-            default_index=index,  # optional
-            orientation="horizontal",
-        )
-        return selected
+st.markdown("""
+<style>
+    .eczjsme11 {
+            display: none;
+    }  
+</style>
+""", unsafe_allow_html=True)
 
-    if example == 3:
-        # 2. horizontal menu with custom style
-        selected = option_menu(
-            menu_title=None,  # required
-            options=["Home", "Projects", "Contact"],  # required
-            icons=["house", "book", "envelope"],  # optional
-            menu_icon="cast",  # optional
-            default_index=index,  # optional
-            orientation="horizontal",
-            styles={
-                "container": {"padding": "0!important", "background-color": "#fafafa"},
-                "icon": {"color": "orange", "font-size": "25px"},
-                "nav-link": {
-                    "font-size": "25px",
-                    "text-align": "left",
-                    "margin": "0px",
-                    "--hover-color": "#eee",
-                },
-                "nav-link-selected": {"background-color": "green"},
-            },
-        )
-        return selected
+if "query" not in st.session_state:
+    st.session_state["query"] = ""
+if "draft" not in st.session_state:
+    st.session_state["draft"] = ""
 
 
-selected = streamlit_menu(example=EXAMPLE_NO)
+def printer(x):
+    # st.session_state.query
+    print(x)
 
-if selected == "Home":
-    st.title('Upload your question and solution')
 
-    # Query text
-    query_text = st.text_input(
-        'Enter your question:', placeholder='Please input the assignment\'s instruction')
+# Query text
+query_text = st.text_area(
+    'Enter the question:',
+    placeholder='Please input the assignment\'s instruction',
+    value=st.session_state.query,
+    # on_change=printer,
+    # args=(query_text,)
+)
+# Query text
+draft_answer = st.text_area(
+    'Enter your drafted answer:',
+    height=300,
+    placeholder='Please input your answer',
+    value=st.session_state.draft)
 
-    # Form input and query
-    result = []
-    with st.form('myform', clear_on_submit=True):
-        solution = st.text_area('Assignment',
-                                placeholder="Paste your draft",)
-        submitted = st.form_submit_button(
-            'Submit')
-        if submitted:
-            with st.spinner('Calculating...'):
+# Form input and query
+# result = []
+# with st.form('myform', clear_on_submit=True):
+#     solution = st.text_area('Assignment',
+#                             placeholder="Paste your draft",)
+#     submitted = st.form_submit_button(
+#         'Submit')
+#     if submitted:
+#         with st.spinner('Calculating...'):
+#             st.write("Hello")
 
-                selected = streamlit_menu(index=1)
 
-if selected == "Projects":
-    st.title(f"You have selected {selected}")
-if selected == "Contact":
-    st.title(f"You have selected {selected}")
+def session_update():
+    st.session_state.query = query_text
+
+
+def main_page():
+    next = st.button("Next", disabled=not (query_text and draft_answer))
+    if next:
+
+        # set the value to session
+        st.session_state.query = query_text
+        st.session_state.draft = draft_answer
+        # Get or print the two inputs
+        print(st.session_state.query)
+        print(st.session_state.draft)
+        switch_page("Advice")
+
+
+main_page()
