@@ -5,8 +5,6 @@ import json
 import main
 
 
-# st.title('Advice')
-
 st.markdown("""
 <style>
     .eczjsme11 {

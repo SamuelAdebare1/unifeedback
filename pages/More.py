@@ -41,19 +41,27 @@ def generate_response(uploaded_file, openai_api_key, query_text):
 uploaded_file = st.file_uploader('Upload an article', type='txt')
 # Query text
 query_text = st.text_input(
-    'Enter your question:', placeholder='Please provide a short summary.', disabled=not uploaded_file)
+    'Enter your question:',
+    placeholder='Please provide a short summary.',
+    # disabled=not uploaded_file
+)
 
 # Form input and query
 result = []
 # with st.form('myform', clear_on_submit=True):
 openai_api_key = os.getenv("OPENAI_API_KEY")[1:]
 submitted = st.button(
-    'Submit', disabled=not (uploaded_file and query_text))
-if submitted and openai_api_key.startswith('sk-'):
+    'Submit',
+    # disabled=not (uploaded_file and query_text)
+)
+if submitted and openai_api_key.startswith('sk-') and query_text:
     with st.spinner('Calculating...'):
         response = generate_response(
             uploaded_file, openai_api_key, query_text)
         result.append(response)
+else:
+    st.warning(
+        "Please confirm that all inputs are correctly provided before submitting.")
 
 if len(result):
     st.info(response)

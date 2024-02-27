@@ -28,26 +28,13 @@ query_text = st.text_area(
     'Enter the question:',
     placeholder='Please input the assignment\'s instruction',
     value=st.session_state.query,
-    # on_change=printer,
-    # args=(query_text,)
 )
-# Query text
+# Query answer
 draft_answer = st.text_area(
     'Enter your drafted answer:',
     height=300,
     placeholder='Please input your answer',
     value=st.session_state.draft)
-
-# Form input and query
-# result = []
-# with st.form('myform', clear_on_submit=True):
-#     solution = st.text_area('Assignment',
-#                             placeholder="Paste your draft",)
-#     submitted = st.form_submit_button(
-#         'Submit')
-#     if submitted:
-#         with st.spinner('Calculating...'):
-#             st.write("Hello")
 
 
 def session_update():
@@ -55,16 +42,14 @@ def session_update():
 
 
 def main_page():
-    next = st.button("Next", disabled=not (query_text and draft_answer))
+    next = st.button("Next")
     if next:
-
-        # set the value to session
-        st.session_state.query = query_text
-        st.session_state.draft = draft_answer
-        # Get or print the two inputs
-        # print(st.session_state.query)
-        # print(st.session_state.draft)
-        switch_page("Advice")
+        if query_text and draft_answer:
+            st.session_state.query = query_text
+            st.session_state.draft = draft_answer
+            switch_page("Advice")
+        else:
+            st.warning("All input field must be filled")
 
 
 main_page()

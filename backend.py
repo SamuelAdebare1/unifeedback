@@ -26,8 +26,7 @@ def advice_response(instruction, answer):
     llm = OpenAI(temperature=1,
                  api_key=openai_api_key)
     chain = LLMChain(llm=llm, prompt=prompt_template)
-    return chain.invoke({"instruction": instruction,
-                        "answer": answer})
+    return chain.invoke({"instruction": instruction, "answer": answer})
 
 
 print(advice_response(instruction="What is demoracy",
