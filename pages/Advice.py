@@ -4,6 +4,12 @@ import backend
 import json
 import main
 
+if "query" not in st.session_state:
+    st.session_state["query"] = ""
+if "draft" not in st.session_state:
+    st.session_state["draft"] = ""
+if "get_html" not in st.session_state:
+    st.session_state["get_html"] = ""
 
 st.markdown("""
 <style>
@@ -17,20 +23,31 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-def page():
-    with st.spinner('Reviewing...'):
-        response = backend.advice_response(
-            instruction=main.query_text, answer=main.draft_answer)
-        with open('data.json', 'w', encoding='utf-8') as f:
-            json.dump(response, f, ensure_ascii=False, indent=4)
+def printer():
+    print("print===")
+    # print(main.get_html)
+    print(st.session_state)
 
-        f = open('data.json')
-        html_text = json.load(f)
-        html_text = html_text.get("text")
-        f.close()
-        st.write(
-            html_text,
-            unsafe_allow_html=True)
+
+def page():
+    # with st.spinner('Reviewing...'):
+    # response = backend.advice_response(
+    #     instruction=main.query_text, answer=main.draft_answer)
+    # with open('data.json', 'w', encoding='utf-8') as f:
+    #     json.dump(response, f, ensure_ascii=False, indent=4)
+
+    # f = open('data.json')
+    # html_text = json.load(f)
+    # html_text = html_text.get("text")
+    # f.close()
+    # st.text_area(
+    #     "Area",
+    #     on_change=printer,
+    #     # on_change=main.aka
+    # )
+    st.write(
+        st.session_state.get_html,
+        unsafe_allow_html=True)
 
     col1, col2 = st.columns(2)
     prev = col1.button("Prev", key="advicePrev")
@@ -43,3 +60,5 @@ def page():
 
 
 page()
+if st.session_state.get_html == "":
+    st.warning("Please go back to input your assigment")
