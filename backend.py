@@ -11,19 +11,24 @@ import json
 
 
 load_dotenv()
-openai_api_key = os.getenv("OPENAI_API_KEY")
+# openai_api_key = os.getenv("OPENAI_API_KEY")
+openai_api_key = st.secrets["OPENAI_API_KEY"]
 
 
 def advice_response(instruction, answer):
-    template = """ Assume the role of a university professor and review my assignment. I am a university student and you are addressing me only so don't say things like "Welcome to our class!". The instruction for the assignment is: "{instruction}" and my answer is: "{answer}". What other things should I add or remove to make the assignment the best it can be? Let your response be in html body format. Response containing pretty html that includes <li>, <italics>, <bold> etc is considered good. Answer in the same language as it is in the {answer}.
+    template = """ Assume the role of a university professor and review my assignment. I am a university student and you are addressing me only so don't say things like "Welcome to our class!". The instruction for the assignment is: "{instruction}" and my answer is: "{answer}". What other things should I add or remove to make the assignment the best it can be? Your response MUST be in html body format. Response containing pretty HTML that includes <li>, <italics>, <bold> etc is considered good. Answer in the same language as it is in the {answer}.
     """
     prompt_template = PromptTemplate(
         input_variables=["instruction", "answer"],
         template=template
     )
 
-    llm = OpenAI(temperature=0.7,
-                 api_key=openai_api_key[1:])
+    llm = OpenAI(temperature=1,
+                 api_key=openai_api_key)
     chain = LLMChain(llm=llm, prompt=prompt_template)
     return chain.invoke({"instruction": instruction,
                         "answer": answer})
+
+
+print(advice_response(instruction="What is demoracy",
+      answer="It is the government of the people"))
