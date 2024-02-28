@@ -23,11 +23,9 @@ def advice_response(instruction, answer):
         template=template
     )
 
-    llm = OpenAI(temperature=1,
-                 api_key=openai_api_key)
+    llm = OpenAI(temperature=0.95,
+                 api_key=openai_api_key,
+                 #  max_tokens=4094
+                 )
     chain = LLMChain(llm=llm, prompt=prompt_template)
     return chain.invoke({"instruction": instruction, "answer": answer})
-
-
-print(advice_response(instruction="What is demoracy",
-      answer="It is the government of the people"))

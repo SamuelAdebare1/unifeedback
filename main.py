@@ -59,13 +59,6 @@ def generator():
         return html_text
 
 
-akan = "aka"
-
-
-def aka(x):
-    print(x)
-
-
 def main_page():
     next = st.button("Submit for Review")
     if next:
