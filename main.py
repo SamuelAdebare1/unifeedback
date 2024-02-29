@@ -87,7 +87,7 @@ if st.session_state["input_method"] == "File":
             # st.text(text_result)
             st.session_state.file_content = text_result
 
-        elif uploaded_file.type == "docx":
+        elif uploaded_file.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
             # open a named temporary file
 
             # text = textract.process(uploaded_file.read())
@@ -95,12 +95,11 @@ if st.session_state["input_method"] == "File":
             #     bytes(f"{text}", "utf-8"))[0].decode("utf-8")
 
             # text_result = decoded_string
-            text_result = docx2txt.process("culturedocx.docx")
-            st.write(text_result)
+            text_result = docx2txt.process(uploaded_file)
             st.session_state.file_content = text_result
         else:
             st.warning(
-                "Unsupported file format. Please upload a .txt or .pdf file.")
+                "Unsupported file format. Please upload a .txt, .docx or .pdf file.")
 
 elif st.session_state["input_method"] == "Text box":
     # create on_change to update

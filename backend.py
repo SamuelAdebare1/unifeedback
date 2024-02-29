@@ -22,17 +22,17 @@ def advice_response(instruction, answer):
     Professor, please evaluate the following assignment:
 
     **Assignment Question:**
-    [Insert the assignment question here]
+    {instruction}
 
     **Student Answer:**
-    [Insert the student's answer here]
+    {answer}
 
     **Feedback:**
     - Identify and elaborate on the key strengths in the student's response.
     - Provide constructive criticism on areas that could be improved or expanded.
     - Include specific suggestions for enhancing the overall quality of the answer.
 
-    Ensure that the feedback is detailed, encouraging, and aligns with the learning objectives of the assignment. Aim for a comprehensive evaluation that promotes student understanding and improvement. Your response must be in html format. Your response must not be more than 4000 tokens according to byte pair encoding.
+    Ensure that the feedback is detailed, encouraging, and aligns with the learning objectives of the assignment. Aim for a comprehensive evaluation that promotes student understanding and improvement. Your response must be contain bullet points or a list form. Your response must not be more than 4000 tokens according to byte pair encoding. Don't say things like "Welcome to our class!".
     """
     prompt_template = PromptTemplate(
         input_variables=["instruction", "answer"],
