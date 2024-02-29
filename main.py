@@ -86,8 +86,7 @@ if st.session_state["input_method"] == "File":
             text_result = read_text_from_pdf(uploaded_file)
             # st.text(text_result)
             st.session_state.file_content = text_result
-
-        elif uploaded_file.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+        elif uploaded_file.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" or uploaded_file.name.lower().endswith(".docx"):
             # open a named temporary file
 
             # text = textract.process(uploaded_file.read())
