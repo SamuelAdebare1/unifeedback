@@ -2,11 +2,11 @@ import streamlit as st
 from streamlit_extras.switch_page_button import switch_page
 import backend
 import json
-import time
+# import time
 import pdfplumber
-import textract
-import codecs
-import os
+# import textract
+# import codecs
+# import os
 import docx2txt
 
 
