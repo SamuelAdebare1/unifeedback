@@ -6,7 +6,6 @@ import time
 import pdfplumber
 import textract
 import codecs
-from tempfile import NamedTemporaryFile
 import os
 import docx2txt
 

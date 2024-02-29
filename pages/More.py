@@ -5,7 +5,7 @@ from langchain.text_splitter import CharacterTextSplitter
 from langchain_community.llms import OpenAI
 import streamlit as st
 from streamlit_extras.switch_page_button import switch_page
-import os
+# import os
 
 st.title('Docbot')
 
