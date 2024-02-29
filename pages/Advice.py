@@ -8,8 +8,15 @@ if "query" not in st.session_state:
     st.session_state["query"] = ""
 if "draft" not in st.session_state:
     st.session_state["draft"] = ""
+if "file_content" not in st.session_state:
+    st.session_state["txt"] = ""
 if "get_html" not in st.session_state:
     st.session_state["get_html"] = ""
+if "input_method" not in st.session_state:
+    st.session_state["input_method"] = "File"
+if "uploaded_file" not in st.session_state:
+    st.session_state["uploaded_file"] = ""
+
 
 st.markdown("""
 <style>

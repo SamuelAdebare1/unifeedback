@@ -49,7 +49,7 @@ query_text = st.text_input(
 # Form input and query
 result = []
 # with st.form('myform', clear_on_submit=True):
-openai_api_key = os.getenv("OPENAI_API_KEY")[1:]
+openai_api_key = st.secrets["OPENAI_API_KEY"]
 submitted = st.button(
     'Submit',
     # disabled=not (uploaded_file and query_text)

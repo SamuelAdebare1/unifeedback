@@ -18,6 +18,22 @@ openai_api_key = st.secrets["OPENAI_API_KEY"]
 def advice_response(instruction, answer):
     template = """ Assume the role of a university professor and review my assignment. I am a university student and you are addressing me only so don't say things like "Welcome to our class!". The instruction for the assignment is: "{instruction}" and my answer is: "{answer}". What other things should I add or remove to make the assignment the best it can be? Your response MUST be in html body format. Response containing pretty HTML that includes <li>, <italics>, <bold> etc is considered good. Answer in the same language as it is in the {answer}.
     """
+    template = """"
+    Professor, please evaluate the following assignment:
+
+    **Assignment Question:**
+    [Insert the assignment question here]
+
+    **Student Answer:**
+    [Insert the student's answer here]
+
+    **Feedback:**
+    - Identify and elaborate on the key strengths in the student's response.
+    - Provide constructive criticism on areas that could be improved or expanded.
+    - Include specific suggestions for enhancing the overall quality of the answer.
+
+    Ensure that the feedback is detailed, encouraging, and aligns with the learning objectives of the assignment. Aim for a comprehensive evaluation that promotes student understanding and improvement. Your response must be in html format. Your response must not be more than 4000 tokens according to byte pair encoding.
+    """
     prompt_template = PromptTemplate(
         input_variables=["instruction", "answer"],
         template=template
