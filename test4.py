@@ -46,9 +46,6 @@ def generate_text(upload):
     text_result = ""
     # Load document if file is uploaded
     if upload is not None:
-        # documents = [upload.read().decode()]
-        # st.write(documents)
-
         file_contents = upload.read()
         if upload.type == "text/plain":
             text_result = read_text_from_txt(file_contents)
@@ -57,13 +54,7 @@ def generate_text(upload):
             text_result = read_text_from_pdf(upload)
             # st.session_state.file_content_ = text_result
         elif upload.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" or upload.name.lower().endswith(".docx"):
-            # text = textract.process(upload.read())
-            # decoded_string = codecs.escape_decode(
-            #     bytes(f"{text}", "utf-8"))[0].decode("utf-8")
-
-            # text_result = decoded_string
             text_result = docx2txt.process(upload)
-            # st.session_state.file_content_ = text_result
         else:
             st.warning(
                 "Unsupported file format. Please upload a .txt, .docx or .pdf file.")
@@ -112,9 +103,7 @@ elif st.session_state["input_method_"] == "File":
 
 """
         st.text("Preview:")
-        preview_text = " ".join(text.split(" ")[:10])
-        preview_text = preview_text + "\n ... \n" + \
-            " ".join(text.split(" ")[-10:])
+
         st.info(preview)
 
     elif len(text) <= 30:
@@ -157,7 +146,6 @@ def generate_response(file_text, openai_api_key, query_text):
 
 # Form input and query
 result = []
-# with st.form('myform', clear_on_submit=True):
 
 openai_api_key = st.secrets["OPENAI_API_KEY"]
 submitted = st.button(
@@ -191,10 +179,10 @@ if len(result):
     st.info(response)
 
 
-# def more_page():
-#     prev = st.button("Prev")
-#     if prev:
-#         switch_page("Advice")
+def more_page():
+    prev = st.button("Prev")
+    if prev:
+        switch_page("Advice")
 
 
-# more_page()
+more_page()
