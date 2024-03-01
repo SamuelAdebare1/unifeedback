@@ -5,7 +5,7 @@
 # from langchain_openai import OpenAI
 # import streamlit as st
 # from streamlit_extras.switch_page_button import switch_page
-from langchain.chains import RetrievalQA
+from langchain.chains import ConversationalRetrievalChain, RetrievalQA
 from langchain_community.vectorstores import Chroma
 from langchain_community.embeddings import OpenAIEmbeddings
 from langchain.text_splitter import CharacterTextSplitter
@@ -59,7 +59,7 @@ def generate_text(upload):
             st.warning(
                 "Unsupported file format. Please upload a .txt, .docx or .pdf file.")
     else:
-        st.warning("Please upload a file")
+        pass
     return text_result
 
 
@@ -95,7 +95,7 @@ elif st.session_state["input_method_"] == "File":
     uploaded_file = st.file_uploader(
         'Upload an article', type=['txt', 'pdf', 'docx'])
     text = generate_text(uploaded_file)
-    if len(text) > 30:
+    if len(text.split(" ")) > 30:
         preview = f"""
 {" ".join(text.split(" ")[:10])}\n 
 .............. \n
@@ -106,7 +106,7 @@ elif st.session_state["input_method_"] == "File":
 
         st.info(preview)
 
-    elif len(text) <= 30:
+    elif len(text.split(" ")) <= 30 and len(text) > 0:
         st.text("Preview:")
         st.info(text)
 
@@ -134,8 +134,8 @@ def generate_response(file_text, openai_api_key, query_text):
     # Select embeddings
     embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key)
     # Create a vectorstore from documents
-    db = Chroma.from_documents(texts, embeddings)
-    # db = FAISS.from_documents(texts, embeddings)
+    # db = Chroma.from_documents(texts, embeddings)
+    db = FAISS.from_documents(texts, embeddings)
     # Create retriever interface
     retriever = db.as_retriever()
     # Create QA chain
@@ -152,28 +152,38 @@ submitted = st.button(
     'Submit',
     # disabled=not (file_text and query_text)
 )
-if submitted and openai_api_key.startswith('sk-') and query_text:
-    with st.spinner('Calculating...'):
-        st.session_state["query_"] = query_text
-        if st.session_state["input_method_"] == "File":
-            st.session_state["file_content_"] = generate_text(uploaded_file)
-            response = generate_response(
-                st.session_state["file_content_"], openai_api_key, st.session_state["query_"])
-            result.append(response)
-        elif st.session_state["input_method_"] == "Text box":
-            st.session_state["text_box"] = passage
 
-            if st.session_state["text_box"] == "":
-                st.warning("Please input some text")
-            else:
+
+if submitted and openai_api_key.startswith('sk-'):
+    if uploaded_file != None and len(query_text) > 0:
+        with st.spinner('Calculating...'):
+            st.session_state["query_"] = query_text
+            if st.session_state["input_method_"] == "File":
+                if uploaded_file == None:
+                    st.warning("Please upload a file")
+                st.session_state["file_content_"] = generate_text(
+                    uploaded_file)
                 response = generate_response(
-                    st.session_state["text_box"], openai_api_key, st.session_state["query_"])
+                    st.session_state["file_content_"], openai_api_key, st.session_state["query_"])
                 result.append(response)
-                st.write(st.session_state)
+            elif st.session_state["input_method_"] == "Text box":
+                st.session_state["text_box"] = passage
 
-else:
-    st.warning(
-        "Please confirm that all inputs are correctly provided before submitting.")
+                if st.session_state["text_box"] == "":
+                    st.warning("Please input some text")
+                else:
+                    response = generate_response(
+                        st.session_state["text_box"], openai_api_key, st.session_state["query_"])
+                    result.append(response)
+                    st.write(st.session_state)
+    else:
+        st.warning(
+            "Please confirm that all inputs are correctly provided before submitting.")
+
+# else:
+#     pass
+#     st.warning(
+#         "Please confirm that all inputs are correctly provided before submitting.")
 
 if len(result):
     st.info(response)
