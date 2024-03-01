@@ -19,14 +19,14 @@ import docx2txt
 
 # from langchain_community.embeddings import OpenAIEmbeddings
 
-# if "input_method_" not in st.session_state:
-#     st.session_state["input_method_"] = "File"
-# if "query_" not in st.session_state:
-#     st.session_state["query_"] = ""
-# if "text_box" not in st.session_state:
-#     st.session_state["text_box"] = ""
-# if "file_content_" not in st.session_state:
-#     st.session_state.file_content_ = ""
+if "input_method_" not in st.session_state:
+    st.session_state["input_method_"] = "File"
+if "query_" not in st.session_state:
+    st.session_state["query_"] = ""
+if "text_box" not in st.session_state:
+    st.session_state["text_box"] = ""
+if "file_content_" not in st.session_state:
+    st.session_state["file_content_"] = ""
 
 
 def read_text_from_txt(file_contents):
@@ -42,6 +42,36 @@ def read_text_from_pdf(pdf_io):
     return data
 
 
+def generate_text(upload):
+    text_result = ""
+    # Load document if file is uploaded
+    if upload is not None:
+        # documents = [upload.read().decode()]
+        # st.write(documents)
+
+        file_contents = upload.read()
+        if upload.type == "text/plain":
+            text_result = read_text_from_txt(file_contents)
+            # st.session_state.file_content_ = text_result
+        elif upload.type == "application/pdf":
+            text_result = read_text_from_pdf(upload)
+            # st.session_state.file_content_ = text_result
+        elif upload.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" or upload.name.lower().endswith(".docx"):
+            # text = textract.process(upload.read())
+            # decoded_string = codecs.escape_decode(
+            #     bytes(f"{text}", "utf-8"))[0].decode("utf-8")
+
+            # text_result = decoded_string
+            text_result = docx2txt.process(upload)
+            # st.session_state.file_content_ = text_result
+        else:
+            st.warning(
+                "Unsupported file format. Please upload a .txt, .docx or .pdf file.")
+    else:
+        st.warning("Please upload a file")
+    return text_result
+
+
 st.title('Docbot')
 
 st.markdown("""
@@ -53,123 +83,112 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-# radio_options = ["File", "Text box"]
-# radio_val = st.radio("Select input method:",
-#                      radio_options,
-#                      horizontal=True,
-#                      key="radio_buttons_",
-#                      #  index=radio_options.index(st.session_state.input_method_ or "File"),
-#                      #  format_func=lambda x: x
-#                      #  on_change=radio_switch
-#                      )
-# st.session_state["input_method_"] = radio_val
+radio_options = ["File", "Text box"]
+radio_val = st.radio("Select input method:",
+                     radio_options,
+                     horizontal=True,
+                     key="radio_buttons_key",
+                     )
+st.session_state["input_method_"] = radio_val
 
-# if st.session_state["input_method_"] == "Text box":
-#     draft_answer = st.text_area(
-#         'Enter your drafted answer:',
-#         height=300,
-#         placeholder='Please input your answer',
-#         # value=st.session_state.text_box
-#     )
+if st.session_state["input_method_"] == "Text box":
+    passage = st.text_area(
+        'Enter your passage:',
+        height=300,
+        placeholder='Please input your answer',
+        # value=st.session_state.text_box
+    )
 
-# elif st.session_state["input_method_"] == "File":
-#     # File upload
-#     uploaded_file = st.file_uploader(
-#         'Upload an article', type=['txt', 'pdf', 'docx'])
+elif st.session_state["input_method_"] == "File":
+    # File upload
+    uploaded_file = st.file_uploader(
+        'Upload an article', type=['txt', 'pdf', 'docx'])
+    text = generate_text(uploaded_file)
+    if len(text) > 30:
+        preview = f"""
+{" ".join(text.split(" ")[:10])}\n 
+.............. \n
+{" ".join(text.split(" ")[-10:])}
 
-# # Query text
-# query_text = st.text_input(
-#     'Enter your question:',
-#     placeholder='Please input yout text',
-#     # value=st.session_state["query_"]
-#     # disabled=not uploaded_file
-# )
+"""
+        st.text("Preview:")
+        preview_text = " ".join(text.split(" ")[:10])
+        preview_text = preview_text + "\n ... \n" + \
+            " ".join(text.split(" ")[-10:])
+        st.info(preview)
+
+    elif len(text) <= 30:
+        st.text("Preview:")
+        st.info(text)
+
+    else:
+        pass
+
+    # print(type(preview_text))
+    # preview_text = preview_text + "\n ... \n"+text.split(" ")[10:]
 
 
-def generate_response(uploaded_file, openai_api_key, query_text):
-    # Load document if file is uploaded
-    if uploaded_file is not None:
-        # documents = [uploaded_file.read().decode()]
-        # st.write(documents)
+# Query text
+query_text = st.text_input(
+    'Enter your question:',
+    placeholder='Please input yout text',
+    value=st.session_state["query_"],
+    # disabled=not uploaded_file
+)
 
-        file_contents = uploaded_file.read()
-        if uploaded_file.type == "text/plain":
-            text_result = read_text_from_txt(file_contents)
-            # st.session_state.file_content_ = text_result
-        elif uploaded_file.type == "application/pdf":
-            text_result = read_text_from_pdf(uploaded_file)
-            # st.session_state.file_content_ = text_result
-        elif uploaded_file.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" or uploaded_file.name.lower().endswith(".docx"):
-            # text = textract.process(uploaded_file.read())
-            # decoded_string = codecs.escape_decode(
-            #     bytes(f"{text}", "utf-8"))[0].decode("utf-8")
 
-            # text_result = decoded_string
-            text_result = docx2txt.process(uploaded_file)
-            # st.session_state.file_content_ = text_result
-        else:
-            st.warning(
-                "Unsupported file format. Please upload a .txt, .docx or .pdf file.")
-
-        # Split documents into chunks
-        text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
-        # documents = st.session_state.file_content_
-        documents = text_result
-        texts = text_splitter.create_documents(documents)
-        # Select embeddings
-        embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key)
-        # Create a vectorstore from documents
-        # db = Chroma.from_documents(texts, embeddings)
-        db = FAISS.from_documents(texts, embeddings)
-        # Create retriever interface
-        retriever = db.as_retriever()
-        # Create QA chain
-        qa = RetrievalQA.from_chain_type(llm=OpenAI(
-            openai_api_key=openai_api_key), chain_type='stuff', retriever=retriever)
-        return qa.run(query_text)
+def generate_response(file_text, openai_api_key, query_text):
+    file_text
+    # Split documents into chunks
+    text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+    texts = text_splitter.create_documents(file_text)
+    # Select embeddings
+    embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key)
+    # Create a vectorstore from documents
+    db = Chroma.from_documents(texts, embeddings)
+    # db = FAISS.from_documents(texts, embeddings)
+    # Create retriever interface
+    retriever = db.as_retriever()
+    # Create QA chain
+    qa = RetrievalQA.from_chain_type(llm=OpenAI(
+        openai_api_key=openai_api_key), chain_type='stuff', retriever=retriever)
+    return qa.run(query_text)
 
 
 # Form input and query
 result = []
-with st.form('myform', clear_on_submit=True):
-    # if st.session_state["input_method_"] == "Text box":
-    #     draft_answer = st.text_area(
-    #         'Enter your drafted answer:',
-    #         height=300,
-    #         placeholder='Please input your answer',
-    #         # value=st.session_state.text_box
-    #     )
+# with st.form('myform', clear_on_submit=True):
 
-    # st.session_state["input_method_"] == "File":
-    uploaded_file = st.file_uploader(
-        'Upload an article', type=['txt', 'pdf', 'docx'])
-
-    # Query text
-    query_text = st.text_input(
-        'Enter your question:',
-        placeholder='Please input yout text',
-        # value=st.session_state["query_"]
-        # disabled=not uploaded_file
-    )
-    openai_api_key = st.secrets["OPENAI_API_KEY"]
-    submitted = st.form_submit_button(
-        'Submit',
-        # disabled=not (uploaded_file and query_text)
-    )
-    if submitted and openai_api_key.startswith('sk-') and query_text:
-        with st.spinner('Calculating...'):
-            # st.session_state["query_"] = query_text
-
+openai_api_key = st.secrets["OPENAI_API_KEY"]
+submitted = st.button(
+    'Submit',
+    # disabled=not (file_text and query_text)
+)
+if submitted and openai_api_key.startswith('sk-') and query_text:
+    with st.spinner('Calculating...'):
+        st.session_state["query_"] = query_text
+        if st.session_state["input_method_"] == "File":
+            st.session_state["file_content_"] = generate_text(uploaded_file)
             response = generate_response(
-                uploaded_file, openai_api_key, query_text)
-            # st.session_state.file_content_ =
+                st.session_state["file_content_"], openai_api_key, st.session_state["query_"])
             result.append(response)
-    else:
-        st.warning(
-            "Please confirm that all inputs are correctly provided before submitting.")
+        elif st.session_state["input_method_"] == "Text box":
+            st.session_state["text_box"] = passage
 
-    if len(result):
-        st.info(response)
+            if st.session_state["text_box"] == "":
+                st.warning("Please input some text")
+            else:
+                response = generate_response(
+                    st.session_state["text_box"], openai_api_key, st.session_state["query_"])
+                result.append(response)
+                st.write(st.session_state)
+
+else:
+    st.warning(
+        "Please confirm that all inputs are correctly provided before submitting.")
+
+if len(result):
+    st.info(response)
 
 
 # def more_page():
