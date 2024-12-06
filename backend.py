@@ -1,4 +1,4 @@
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
 import os
 # from langchain_community.embeddings import OpenAIEmbeddings
 from langchain_openai import OpenAIEmbeddings
@@ -10,9 +10,9 @@ from langchain.chains import LLMChain
 # import json
 
 
-# load_dotenv()
-# openai_api_key = os.getenv("OPENAI_API_KEY")
-openai_api_key = st.secrets["OPENAI_API_KEY"]
+load_dotenv()
+openai_api_key = os.getenv("OPENAI_API_KEY")
+# openai_api_key = st.secrets["OPENAI_API_KEY"]
 
 
 
