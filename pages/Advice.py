@@ -40,7 +40,7 @@ def render_page():
     st.write(st.session_state.get_html, unsafe_allow_html=True)
 
     col1, col2 = st.columns(2)
-    if col1.button("Prev", key="advicePrev"):
+    if col1.button("Go back", key="advicePrev"):
         switch_page("main")
 
     # Uncomment if "Next" functionality is needed later
